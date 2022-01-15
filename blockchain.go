@@ -23,6 +23,18 @@ type Blockchain struct {
 	difficulty   int
 }
 
+func main() {
+	// create a new blockchain instance with a mining difficulty of 2
+	blockchain := CreateBlockchain(2)
+
+	// record transactions on the blockchain for Alice, Bob, and John
+	blockchain.addBlock("Alice", "Bob", 5)
+	blockchain.addBlock("John", "Bob", 2)
+
+	// check if the blockchain is valid; expecting true
+	fmt.Println(blockchain.isValid())
+}
+
 func (b Block) calculateHash() string {
 	data, _ := json.Marshal(b.data)
 	blockData := b.previousHash + string(data) + b.timestamp.String() + strconv.Itoa(b.pow)
@@ -63,4 +75,15 @@ func (b *Blockchain) addBlock(from, to string, amount float64) {
 	}
 	newBlock.mine(b.difficulty)
 	b.chain = append(b.chain, newBlock)
+}
+
+func (b Blockchain) isValid() bool {
+	for i := range b.chain[1:] {
+		previousBlock := b.chain[i]
+		currentBlock := b.chain[i+1]
+		if currentBlock.hash != currentBlock.calculateHash() || currentBlock.previousHash != previousBlock.hash {
+			return false
+		}
+	}
+	return true
 }
