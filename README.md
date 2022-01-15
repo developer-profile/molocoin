@@ -1,0 +1,2 @@
+# molocoin
+Blockchain startup
